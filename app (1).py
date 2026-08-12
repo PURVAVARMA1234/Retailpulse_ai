@@ -1,9 +1,8 @@
-
 import streamlit as st
 import pandas as pd
 import numpy as np
-import os
 import plotly.express as px
+import os
 
 from sklearn.linear_model import LinearRegression
 
@@ -16,20 +15,25 @@ st.set_page_config(
     page_title="RetailPulse AI",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="auto"
 )
 
 
 # ============================================================
-# CUSTOM CSS
+# RESPONSIVE CSS
+# IMPORTANT:
+# NO position: fixed
+# NO position: absolute
+# NO custom sidebar positioning
+# Streamlit native sidebar is preserved
 # ============================================================
 
 st.markdown("""
 <style>
 
-/* =========================
-   GENERAL
-   ========================= */
+/* ============================================================
+   GENERAL TEXT
+============================================================ */
 
 h1, h2, h3, h4 {
     color: var(--text-color) !important;
@@ -40,152 +44,281 @@ p, label, span {
 }
 
 
-/* =========================
+/* ============================================================
    SIDEBAR
-   ========================= */
+   DO NOT CHANGE POSITION
+============================================================ */
 
 [data-testid="stSidebar"] {
     background-color: var(--secondary-background-color) !important;
 }
 
 [data-testid="stSidebar"] * {
-    color: var(--text-color) !important;
+    box-sizing: border-box;
 }
 
 
-/* =========================
+/* ============================================================
    KPI CARDS
-   ========================= */
+============================================================ */
 
 [data-testid="stMetric"] {
 
     background-color:
         var(--secondary-background-color) !important;
 
-    border: 1px solid
-        rgba(128, 128, 128, 0.25);
+    border:
+        1px solid rgba(128,128,128,0.25);
 
-    border-radius: 16px;
+    border-radius:
+        16px;
 
-    padding: 20px 22px;
+    padding:
+        18px 20px;
 
-    min-height: 125px;
+    min-height:
+        120px;
 
     box-shadow:
-        0 4px 14px rgba(0, 0, 0, 0.08);
+        0 4px 14px rgba(0,0,0,0.08);
 
     transition:
         transform 0.2s ease,
         box-shadow 0.2s ease;
 }
 
+
 [data-testid="stMetric"]:hover {
 
-    transform: translateY(-3px);
+    transform:
+        translateY(-3px);
 
     box-shadow:
-        0 8px 22px rgba(0, 0, 0, 0.13);
+        0 8px 22px rgba(0,0,0,0.13);
 }
 
 
 [data-testid="stMetricLabel"] {
 
-    color: var(--text-color) !important;
+    color:
+        var(--text-color) !important;
 
-    font-size: 14px !important;
+    font-size:
+        14px !important;
 
-    font-weight: 600 !important;
+    font-weight:
+        600 !important;
 }
 
 
 [data-testid="stMetricValue"] {
 
-    color: var(--text-color) !important;
+    color:
+        var(--text-color) !important;
 
-    font-size: 27px !important;
+    font-size:
+        27px !important;
 
-    font-weight: 700 !important;
+    font-weight:
+        700 !important;
 }
 
 
-/* =========================
+/* ============================================================
    BUTTONS
-   ========================= */
+============================================================ */
 
 .stButton > button {
 
-    border-radius: 10px;
+    border-radius:
+        10px;
 
-    font-weight: 600;
+    font-weight:
+        600;
 
-    min-height: 42px;
+    min-height:
+        42px;
 }
 
 
-/* =========================
-   SELECTBOX / MULTISELECT
-   ========================= */
-
-[data-baseweb="select"] {
-
-    border-radius: 8px;
-}
-
-
-/* =========================
+/* ============================================================
    EXPANDER
-   ========================= */
+============================================================ */
 
 [data-testid="stExpander"] {
 
-    border-radius: 14px;
+    border-radius:
+        14px;
 }
 
 
-/* =========================
-   DIVIDER
-   ========================= */
+/* ============================================================
+   TOP MENU
+============================================================ */
 
-hr {
+.rp-topbar {
 
-    opacity: 0.25;
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 10px 14px;
+
+    margin-bottom: 18px;
+
+    border:
+        1px solid rgba(128,128,128,0.25);
+
+    border-radius:
+        14px;
+
+    background:
+        var(--secondary-background-color);
 }
 
 
-/* =========================
-   CUSTOM HEADER
-   ========================= */
+.rp-brand {
 
-.retail-header {
+    font-size:
+        18px;
 
-    padding: 18px 0 8px 0;
+    font-weight:
+        750;
 }
 
-.retail-subtitle {
 
-    color: var(--text-color);
+.rp-menu {
 
-    opacity: 0.75;
+    display:
+        flex;
 
-    font-size: 16px;
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    flex-wrap:
+        wrap;
 }
 
-.dashboard-badge {
 
-    display: inline-block;
+.rp-menu a {
 
-    padding: 6px 12px;
+    text-decoration:
+        none !important;
 
-    border-radius: 20px;
+    color:
+        var(--text-color) !important;
 
-    background: var(--secondary-background-color);
+    font-weight:
+        650;
 
-    border: 1px solid
-        rgba(128,128,128,0.25);
+    padding:
+        8px 12px;
 
-    font-size: 13px;
+    border-radius:
+        9px;
+}
 
-    font-weight: 600;
+
+.rp-menu a:hover {
+
+    background:
+        rgba(128,128,128,0.12);
+}
+
+
+.rp-gemini-link {
+
+    border:
+        1px solid rgba(128,128,128,0.28);
+}
+
+
+/* ============================================================
+   GEMINI SECTION
+============================================================ */
+
+.rp-section {
+
+    scroll-margin-top:
+        25px;
+}
+
+
+/* ============================================================
+   MOBILE RESPONSIVE
+============================================================ */
+
+@media (max-width: 768px) {
+
+    .rp-topbar {
+
+        align-items:
+            flex-start;
+
+        padding:
+            10px;
+    }
+
+
+    .rp-brand {
+
+        font-size:
+            15px;
+    }
+
+
+    .rp-menu {
+
+        justify-content:
+            flex-end;
+    }
+
+
+    .rp-menu a {
+
+        font-size:
+            13px;
+
+        padding:
+            7px 9px;
+    }
+
+
+    [data-testid="stMetric"] {
+
+        min-height:
+            100px;
+
+        padding:
+            14px;
+    }
+
+
+    [data-testid="stMetricValue"] {
+
+        font-size:
+            22px !important;
+    }
+
+
+    .block-container {
+
+        padding-left:
+            1rem !important;
+
+        padding-right:
+            1rem !important;
+    }
+
 }
 
 </style>
@@ -193,16 +326,15 @@ hr {
 
 
 # ============================================================
-# DATA LOADING
+# LOAD DATA
 # ============================================================
-
-DATA_FILE = "combined_retail_data_clean.csv"
-
 
 @st.cache_data
 def load_data():
 
-    data = pd.read_csv(DATA_FILE)
+    data = pd.read_csv(
+        "combined_retail_data_clean.csv"
+    )
 
     data["order_date"] = pd.to_datetime(
         data["order_date"],
@@ -213,96 +345,769 @@ def load_data():
         subset=["order_date"]
     ).copy()
 
+
+    # Ensure numeric columns
+
+    for col in [
+        "sales",
+        "profit",
+        "quantity"
+    ]:
+
+        if col in data.columns:
+
+            data[col] = pd.to_numeric(
+                data[col],
+                errors="coerce"
+            ).fillna(0)
+
+
     return data
 
 
-try:
+df = load_data()
 
-    df = load_data()
 
-except Exception as e:
+# ============================================================
+# HELPER — PLOTLY THEME
+# ============================================================
 
-    st.error(
-        f"❌ Could not load {DATA_FILE}"
+def get_plotly_template():
+
+    try:
+
+        if st.context.theme.type == "dark":
+
+            return "plotly_dark"
+
+        else:
+
+            return "plotly_white"
+
+    except Exception:
+
+        return "plotly_white"
+
+
+plot_template = get_plotly_template()
+
+
+# ============================================================
+# HELPER — FORECAST
+# ============================================================
+
+def create_forecast(data):
+
+    monthly_sales = (
+
+        data
+
+        .groupby(
+            data["order_date"]
+            .dt.to_period("M")
+        )["sales"]
+
+        .sum()
+
+        .reset_index()
     )
 
-    st.exception(e)
 
-    st.stop()
+    monthly_sales["order_date"] = (
 
+        monthly_sales["order_date"]
 
-# ============================================================
-# REQUIRED COLUMN CHECK
-# ============================================================
-
-required_columns = [
-    "order_date",
-    "category",
-    "region",
-    "segment",
-    "sales",
-    "profit",
-    "quantity"
-]
-
-missing_columns = [
-    col for col in required_columns
-    if col not in df.columns
-]
-
-if missing_columns:
-
-    st.error(
-        "❌ Required columns are missing:"
+        .dt.to_timestamp()
     )
 
-    st.write(missing_columns)
 
-    st.stop()
+    monthly_sales = (
+
+        monthly_sales
+
+        .sort_values("order_date")
+
+        .reset_index(drop=True)
+    )
+
+
+    forecast_dates = pd.date_range(
+
+        start="2021-01-01",
+
+        periods=12,
+
+        freq="MS"
+    )
+
+
+    # --------------------------------------------------------
+    # NO DATA
+    # --------------------------------------------------------
+
+    if monthly_sales.empty:
+
+        forecast_values = np.zeros(12)
+
+
+    # --------------------------------------------------------
+    # ONLY ONE MONTH
+    # --------------------------------------------------------
+
+    elif len(monthly_sales) == 1:
+
+        forecast_values = np.repeat(
+
+            monthly_sales["sales"].iloc[0],
+
+            12
+        )
+
+
+    # --------------------------------------------------------
+    # LINEAR REGRESSION
+    # --------------------------------------------------------
+
+    else:
+
+        monthly_sales["time_index"] = np.arange(
+
+            len(monthly_sales)
+        )
+
+
+        X = monthly_sales[
+            ["time_index"]
+        ]
+
+
+        y = monthly_sales[
+            "sales"
+        ]
+
+
+        model = LinearRegression()
+
+
+        model.fit(
+            X,
+            y
+        )
+
+
+        first_month = (
+
+            monthly_sales[
+                "order_date"
+            ].min()
+        )
+
+
+        forecast_index = np.array([
+
+            (
+                (date.year - first_month.year)
+                * 12
+
+                +
+
+                (date.month - first_month.month)
+            )
+
+            for date in forecast_dates
+
+        ]).reshape(
+            -1,
+            1
+        )
+
+
+        forecast_values = model.predict(
+
+            forecast_index
+        )
+
+
+    # Never allow negative sales
+
+    forecast_values = np.maximum(
+
+        forecast_values,
+
+        0
+    )
+
+
+    forecast = pd.DataFrame({
+
+        "Month":
+            forecast_dates,
+
+        "Predicted Sales":
+            forecast_values
+    })
+
+
+    return monthly_sales, forecast
 
 
 # ============================================================
-# HEADER
+# HELPER — GEMINI BUSINESS CONTEXT
+# ============================================================
+
+def create_business_context(
+
+    filtered_df,
+
+    monthly_sales,
+
+    forecast,
+
+    selected_categories,
+
+    selected_regions,
+
+    selected_segments,
+
+    start_date,
+
+    end_date,
+
+    dashboard_name
+
+):
+
+
+    category_sales = (
+
+        filtered_df
+
+        .groupby("category")["sales"]
+
+        .sum()
+    )
+
+
+    category_profit = (
+
+        filtered_df
+
+        .groupby("category")["profit"]
+
+        .sum()
+    )
+
+
+    region_sales = (
+
+        filtered_df
+
+        .groupby("region")["sales"]
+
+        .sum()
+    )
+
+
+    region_profit = (
+
+        filtered_df
+
+        .groupby("region")["profit"]
+
+        .sum()
+    )
+
+
+    context = f"""
+
+RETAILPULSE AI
+=============================
+
+CURRENT DASHBOARD:
+{dashboard_name}
+
+
+SELECTED DATE RANGE:
+{start_date.strftime("%d %b %Y")}
+to
+{end_date.strftime("%d %b %Y")}
+
+
+TOTAL SALES:
+{filtered_df["sales"].sum():.2f}
+
+
+TOTAL PROFIT:
+{filtered_df["profit"].sum():.2f}
+
+
+TOTAL QUANTITY SOLD:
+{filtered_df["quantity"].sum():.0f}
+
+
+NUMBER OF RECORDS:
+{len(filtered_df)}
+
+
+SELECTED CATEGORIES:
+{", ".join(
+    map(str, selected_categories)
+)}
+
+
+SELECTED REGIONS:
+{", ".join(
+    map(str, selected_regions)
+)}
+
+
+SELECTED CUSTOMER SEGMENTS:
+{", ".join(
+    map(str, selected_segments)
+)}
+
+
+CATEGORY-WISE SALES:
+{category_sales.to_string()}
+
+
+CATEGORY-WISE PROFIT:
+{category_profit.to_string()}
+
+
+REGION-WISE SALES:
+{region_sales.to_string()}
+
+
+REGION-WISE PROFIT:
+{region_profit.to_string()}
+
+
+HISTORICAL MONTHLY SALES:
+{
+    monthly_sales[
+        ["order_date", "sales"]
+    ].to_string(index=False)
+}
+
+
+2021 SALES FORECAST:
+{
+    forecast.to_string(index=False)
+}
+
+"""
+
+    return context
+
+
+# ============================================================
+# HELPER — GEMINI API
+# ============================================================
+
+def ask_gemini(prompt):
+
+    try:
+
+        from google import genai
+
+
+        api_key = None
+
+
+        # Streamlit Cloud Secrets
+
+        try:
+
+            api_key = st.secrets.get(
+                "GEMINI_API_KEY"
+            )
+
+        except Exception:
+
+            pass
+
+
+        # Local environment fallback
+
+        if not api_key:
+
+            api_key = os.environ.get(
+                "GEMINI_API_KEY"
+            )
+
+
+        if not api_key:
+
+            return (
+
+                None,
+
+                "Gemini API key is not configured. "
+                "Please add GEMINI_API_KEY in Streamlit Secrets."
+
+            )
+
+
+        client = genai.Client(
+
+            api_key=api_key
+        )
+
+
+        response = client.models.generate_content(
+
+            model="gemini-3.5-flash-lite",
+
+            contents=prompt
+        )
+
+
+        return response.text, None
+
+
+    except Exception as e:
+
+        return None, str(e)
+
+
+# ============================================================
+# GLOBAL GEMINI SECTION
+# ============================================================
+
+def show_gemini(
+
+    business_context,
+
+    dashboard_name,
+
+    section_id
+
+):
+
+
+    st.markdown("---")
+
+
+    # HTML anchor
+    st.markdown(
+
+        f"""
+        <div
+            id="{section_id}"
+            class="rp-section">
+        </div>
+        """,
+
+        unsafe_allow_html=True
+    )
+
+
+    st.subheader(
+        "🤖 Gemini AI Business Assistant"
+    )
+
+
+    st.caption(
+
+        f"AI assistant for {dashboard_name}. "
+        "Use the standard analysis or ask your own question."
+    )
+
+
+    with st.expander(
+
+        "🤖 Open Gemini AI",
+
+        expanded=False
+
+    ):
+
+
+        # ====================================================
+        # FIXED ANALYSIS
+        # ====================================================
+
+        fixed_prompt = f"""
+
+You are the expert business analyst
+inside RetailPulse AI.
+
+Current dashboard:
+{dashboard_name}
+
+
+Analyze the following filtered retail data:
+
+{business_context}
+
+
+Give the answer in exactly these sections:
+
+
+### 📈 TREND ANALYSIS
+
+Analyze:
+
+- Historical sales trends
+- Profit trends
+- Category performance
+- Region performance
+- Forecast trends
+
+
+### 💡 BUSINESS INSIGHTS
+
+Identify the most important
+business findings.
+
+
+### ❓ WHY IS THIS HAPPENING?
+
+Explain possible reasons
+using only the provided data.
+
+
+### 🎯 RECOMMENDATIONS
+
+Give exactly 5 practical
+and actionable recommendations.
+
+
+RULES:
+
+- Do not invent numbers.
+- Use only the provided data.
+- Keep explanations simple.
+- Focus on business decisions.
+- Mention when the available data
+  is insufficient.
+"""
+
+
+        if st.button(
+
+            "✨ Generate AI Insights",
+
+            key=f"generate_{section_id}"
+
+        ):
+
+
+            with st.spinner(
+
+                "🤖 Gemini is analyzing..."
+            ):
+
+
+                result, error = ask_gemini(
+
+                    fixed_prompt
+                )
+
+
+            if error:
+
+                st.error(
+                    f"❌ {error}"
+                )
+
+            else:
+
+                st.success(
+                    "✅ AI analysis generated successfully!"
+                )
+
+                st.markdown(
+                    result
+                )
+
+
+        # ====================================================
+        # CUSTOM USER PROMPT
+        # ====================================================
+
+        st.markdown(
+            "### 💬 Ask Gemini Anything"
+        )
+
+
+        user_prompt = st.text_area(
+
+            "Enter your own business question",
+
+            placeholder=(
+                "Example: Which region needs the "
+                "most attention and why?\n\n"
+                "Example: How can I improve profit "
+                "without reducing sales?"
+            ),
+
+            height=110,
+
+            key=f"custom_prompt_{section_id}"
+
+        )
+
+
+        if st.button(
+
+            "🚀 Ask Gemini",
+
+            key=f"ask_{section_id}"
+
+        ):
+
+
+            if not user_prompt.strip():
+
+                st.warning(
+                    "Please enter your question first."
+                )
+
+
+            else:
+
+
+                custom_prompt = f"""
+
+You are Gemini,
+the interactive business assistant
+inside RetailPulse AI.
+
+
+CURRENT DASHBOARD:
+{dashboard_name}
+
+
+USER QUESTION:
+{user_prompt}
+
+
+FILTERED BUSINESS DATA:
+{business_context}
+
+
+TASK:
+
+Answer the user's question directly
+using the supplied retail data.
+
+
+RULES:
+
+- Do not invent numbers.
+- Use only the supplied data.
+- If the data cannot answer something,
+  clearly say so.
+- Give practical business advice.
+- Keep the answer simple and clear.
+"""
+
+
+                with st.spinner(
+
+                    "🤖 Gemini is preparing your answer..."
+                ):
+
+
+                    result, error = ask_gemini(
+
+                        custom_prompt
+                    )
+
+
+                if error:
+
+                    st.error(
+                        f"❌ {error}"
+                    )
+
+                else:
+
+                    st.success(
+                        "✅ Gemini response generated!"
+                    )
+
+                    st.markdown(
+                        result
+                    )
+
+
+# ============================================================
+# TOP MENU
 # ============================================================
 
 st.markdown(
+
     """
-    <div class="retail-header">
+    <div class="rp-topbar">
 
-    # 📊 RetailPulse AI
+        <div class="rp-brand">
+            📊 RetailPulse AI
+        </div>
 
-    <div class="retail-subtitle">
-    AI-Powered Retail Intelligence & Decision Support Platform
-    </div>
+        <div class="rp-menu">
+
+            <a
+                href="#gemini-section"
+                class="rp-gemini-link"
+            >
+                🤖 Gemini
+            </a>
+
+        </div>
 
     </div>
     """,
+
     unsafe_allow_html=True
 )
 
-st.caption(
-    "Analyze business performance, explore customer and sales behavior, "
-    "forecast future sales and ask Gemini AI for business decisions."
+
+# ============================================================
+# MAIN HEADER
+# ============================================================
+
+st.title(
+    "RetailPulse AI"
+)
+
+
+st.markdown(
+    """
+    ### AI-Powered Retail Intelligence & Decision Support Platform
+
+    Analyze business performance, explore customer and sales behavior,
+    forecast future sales and get AI-driven business recommendations.
+    """
 )
 
 
 # ============================================================
-# SIDEBAR
+# SIDEBAR NAVIGATION
 # ============================================================
 
-st.sidebar.title("📊 RetailPulse AI")
-
-st.sidebar.markdown(
-    "### 🧭 Navigation"
+st.sidebar.title(
+    "🧭 Navigation"
 )
+
 
 dashboard = st.sidebar.radio(
+
     "Select Dashboard",
+
     [
+
         "📌 Executive Overview",
+
         "📈 Sales & Customer Analytics",
+
         "🔮 Forecast & AI"
-    ]
+
+    ],
+
+    key="dashboard_navigation"
 )
 
 
@@ -312,56 +1117,74 @@ dashboard = st.sidebar.radio(
 
 st.sidebar.markdown("---")
 
-st.sidebar.markdown(
-    "### 🔎 Global Filters"
+st.sidebar.subheader(
+    "🔎 Global Filters"
 )
 
 
 # CATEGORY
 
 category_options = sorted(
+
     df["category"]
     .dropna()
     .unique()
-    .tolist()
 )
 
+
 selected_categories = st.sidebar.multiselect(
+
     "📦 Category",
+
     category_options,
-    default=category_options
+
+    default=category_options,
+
+    key="category_filter"
 )
 
 
 # REGION
 
 region_options = sorted(
+
     df["region"]
     .dropna()
     .unique()
-    .tolist()
 )
+
 
 selected_regions = st.sidebar.multiselect(
+
     "🌍 Region",
+
     region_options,
-    default=region_options
+
+    default=region_options,
+
+    key="region_filter"
 )
 
 
-# SEGMENT
+# CUSTOMER SEGMENT
 
 segment_options = sorted(
+
     df["segment"]
     .dropna()
     .unique()
-    .tolist()
 )
 
+
 selected_segments = st.sidebar.multiselect(
+
     "👥 Customer Segment",
+
     segment_options,
-    default=segment_options
+
+    default=segment_options,
+
+    key="segment_filter"
 )
 
 
@@ -371,159 +1194,174 @@ selected_segments = st.sidebar.multiselect(
 
 st.sidebar.markdown("---")
 
-st.sidebar.markdown(
-    "### 📅 Date Range"
+st.sidebar.subheader(
+    "📅 Date Range"
 )
 
-min_date = df["order_date"].min().date()
-max_date = df["order_date"].max().date()
+
+min_date = (
+
+    df["order_date"]
+    .min()
+    .date()
+)
+
+
+max_date = (
+
+    df["order_date"]
+    .max()
+    .date()
+)
+
 
 selected_date_range = st.sidebar.date_input(
+
     "Select Date Range",
-    value=(min_date, max_date),
+
+    value=(
+
+        min_date,
+
+        max_date
+
+    ),
+
     min_value=min_date,
-    max_value=max_date
+
+    max_value=max_date,
+
+    key="date_range_filter"
 )
 
 
+# Handle date picker
+
 if isinstance(
+
     selected_date_range,
-    tuple
-) and len(selected_date_range) == 2:
 
-    start_date = pd.Timestamp(
-        selected_date_range[0]
-    )
+    (tuple, list)
 
-    end_date = pd.Timestamp(
-        selected_date_range[1]
-    )
+):
+
+    if len(selected_date_range) == 2:
+
+        start_date = pd.to_datetime(
+
+            selected_date_range[0]
+        )
+
+        end_date = pd.to_datetime(
+
+            selected_date_range[1]
+        )
+
+    else:
+
+        start_date = pd.to_datetime(
+
+            selected_date_range[0]
+        )
+
+        end_date = start_date
 
 else:
 
-    start_date = pd.Timestamp(
-        min_date
+    start_date = pd.to_datetime(
+
+        selected_date_range
     )
 
-    end_date = pd.Timestamp(
-        max_date
-    )
+    end_date = start_date
 
 
 # ============================================================
-# APPLY ALL FILTERS
+# APPLY FILTERS
 # ============================================================
 
 filtered_df = df[
-    (
-        df["category"]
-        .isin(selected_categories)
+
+    df["category"].isin(
+        selected_categories
     )
+
     &
-    (
-        df["region"]
-        .isin(selected_regions)
+
+    df["region"].isin(
+        selected_regions
     )
+
     &
-    (
-        df["segment"]
-        .isin(selected_segments)
+
+    df["segment"].isin(
+        selected_segments
     )
+
     &
+
+    (df["order_date"] >= start_date)
+
+    &
+
     (
         df["order_date"]
-        .between(
-            start_date,
-            end_date + pd.Timedelta(days=1)
-        )
+        <
+
+        end_date
+        + pd.Timedelta(days=1)
     )
+
 ].copy()
 
 
 # ============================================================
-# EMPTY FILTER CHECK
+# EMPTY DATA
 # ============================================================
 
 if filtered_df.empty:
 
     st.warning(
-        "⚠️ No data available for the selected filters."
-    )
-
-    st.info(
-        "Try selecting a wider date range or "
-        "different filter values."
+        "⚠️ No data available for "
+        "the selected filters and date range."
     )
 
     st.stop()
 
 
 # ============================================================
-# HELPER FUNCTIONS
+# CREATE FORECAST
 # ============================================================
 
-def currency(value):
+monthly_sales, forecast = create_forecast(
 
-    return f"₹{value:,.2f}"
-
-
-def chart_template():
-
-    try:
-
-        if st.context.theme.type == "dark":
-
-            return "plotly_dark"
-
-    except Exception:
-
-        pass
-
-    return "plotly_white"
-
-
-def apply_chart_style(fig):
-
-    fig.update_layout(
-        template=chart_template(),
-        hovermode="x unified",
-        margin=dict(
-            l=20,
-            r=20,
-            t=60,
-            b=20
-        )
-    )
-
-    return fig
-
-
-# ============================================================
-# COMMON BUSINESS METRICS
-# ============================================================
-
-total_sales = filtered_df["sales"].sum()
-
-total_profit = filtered_df["profit"].sum()
-
-total_quantity = filtered_df["quantity"].sum()
-
-profit_margin = (
-    (total_profit / total_sales) * 100
-    if total_sales != 0
-    else 0
+    filtered_df
 )
 
-total_orders = (
-    filtered_df["order_id"].nunique()
-    if "order_id" in filtered_df.columns
-    else len(filtered_df)
-)
 
-total_customers = (
-    filtered_df["customer_id"].nunique()
-    if "customer_id" in filtered_df.columns
-    else 0
+# ============================================================
+# GEMINI CONTEXT
+# ============================================================
+
+business_context = create_business_context(
+
+    filtered_df,
+
+    monthly_sales,
+
+    forecast,
+
+    selected_categories,
+
+    selected_regions,
+
+    selected_segments,
+
+    start_date,
+
+    end_date,
+
+    dashboard
 )
 
 
@@ -534,205 +1372,277 @@ total_customers = (
 
 if dashboard == "📌 Executive Overview":
 
-    st.markdown(
-        '<span class="dashboard-badge">'
-        'DASHBOARD 1 • EXECUTIVE OVERVIEW'
-        '</span>',
-        unsafe_allow_html=True
-    )
 
     st.header(
         "📌 Executive Overview"
     )
 
+
     st.caption(
-        "High-level view of the selected business performance."
+
+        f"Selected period: "
+        f"{start_date.strftime('%d %b %Y')} "
+        f"to "
+        f"{end_date.strftime('%d %b %Y')}"
     )
 
 
-    # --------------------------------------------------------
-    # KPI ROW 1
-    # --------------------------------------------------------
+    # ========================================================
+    # KPIs
+    # ========================================================
 
-    col1, col2, col3, col4 = st.columns(4)
+    total_sales = (
+
+        filtered_df["sales"]
+        .sum()
+    )
+
+
+    total_profit = (
+
+        filtered_df["profit"]
+        .sum()
+    )
+
+
+    total_quantity = (
+
+        filtered_df["quantity"]
+        .sum()
+    )
+
+
+    col1, col2, col3 = st.columns(
+
+        3,
+
+        gap="large"
+    )
+
 
     with col1:
 
         st.metric(
+
             "💰 Total Sales",
-            currency(total_sales)
+
+            f"₹{total_sales:,.2f}"
         )
+
 
     with col2:
 
         st.metric(
+
             "📈 Total Profit",
-            currency(total_profit)
+
+            f"₹{total_profit:,.2f}"
         )
+
 
     with col3:
 
         st.metric(
+
             "📦 Quantity Sold",
+
             f"{total_quantity:,.0f}"
         )
 
-    with col4:
 
-        st.metric(
-            "📊 Profit Margin",
-            f"{profit_margin:.2f}%"
-        )
+    st.caption(
 
-
-    # --------------------------------------------------------
-    # KPI ROW 2
-    # --------------------------------------------------------
-
-    col5, col6, col7 = st.columns(3)
-
-    with col5:
-
-        st.metric(
-            "🧾 Total Orders",
-            f"{total_orders:,}"
-        )
-
-    with col6:
-
-        st.metric(
-            "👥 Customers",
-            f"{total_customers:,}"
-        )
-
-    with col7:
-
-        st.metric(
-            "📋 Records",
-            f"{len(filtered_df):,}"
-        )
+        f"Showing "
+        f"{len(filtered_df):,} records "
+        f"out of "
+        f"{len(df):,} total records."
+    )
 
 
-    st.markdown("---")
+    # ========================================================
+    # CATEGORY + REGION
+    # ========================================================
 
+    col1, col2 = st.columns(
 
-    # --------------------------------------------------------
-    # CATEGORY SALES
-    # --------------------------------------------------------
+        2,
 
-    col1, col2 = st.columns(2)
+        gap="large"
+    )
 
 
     with col1:
 
         category_sales = (
+
             filtered_df
+
             .groupby("category")["sales"]
+
             .sum()
+
             .sort_values(
                 ascending=False
             )
+
             .reset_index()
         )
 
+
         fig_category = px.bar(
+
             category_sales,
+
             x="category",
+
             y="sales",
+
             title="📦 Sales by Category",
+
             labels={
-                "category": "Category",
-                "sales": "Sales"
-            },
-            text_auto=".2s"
+
+                "category":
+                    "Category",
+
+                "sales":
+                    "Sales"
+
+            }
         )
 
-        apply_chart_style(
-            fig_category
+
+        fig_category.update_layout(
+
+            template=plot_template,
+
+            hovermode="x unified"
         )
+
 
         st.plotly_chart(
+
             fig_category,
+
             use_container_width=True
         )
 
-
-    # --------------------------------------------------------
-    # REGION SALES
-    # --------------------------------------------------------
 
     with col2:
 
         region_sales = (
+
             filtered_df
+
             .groupby("region")["sales"]
+
             .sum()
+
             .sort_values(
                 ascending=False
             )
+
             .reset_index()
         )
 
+
         fig_region = px.bar(
+
             region_sales,
+
             x="region",
+
             y="sales",
+
             title="🌍 Sales by Region",
+
             labels={
-                "region": "Region",
-                "sales": "Sales"
-            },
-            text_auto=".2s"
+
+                "region":
+                    "Region",
+
+                "sales":
+                    "Sales"
+
+            }
         )
 
-        apply_chart_style(
-            fig_region
+
+        fig_region.update_layout(
+
+            template=plot_template,
+
+            hovermode="x unified"
         )
+
 
         st.plotly_chart(
+
             fig_region,
+
             use_container_width=True
         )
 
 
-    # --------------------------------------------------------
-    # SALES TREND
-    # --------------------------------------------------------
+    # ========================================================
+    # HISTORICAL SALES
+    # ========================================================
 
-    monthly_sales_exec = (
-        filtered_df
-        .groupby(
-            filtered_df["order_date"]
-            .dt.to_period("M")
-        )["sales"]
-        .sum()
-        .reset_index()
+    st.subheader(
+        "📈 Historical Monthly Sales"
     )
 
-    monthly_sales_exec["order_date"] = (
-        monthly_sales_exec["order_date"]
-        .dt.to_timestamp()
-    )
 
-    fig_trend = px.line(
-        monthly_sales_exec,
+    fig_history = px.line(
+
+        monthly_sales,
+
         x="order_date",
+
         y="sales",
-        title="📈 Historical Monthly Sales",
+
+        title="Historical Monthly Sales",
+
         labels={
-            "order_date": "Month",
-            "sales": "Sales"
+
+            "order_date":
+                "Month",
+
+            "sales":
+                "Sales"
+
         },
+
         markers=True
     )
 
-    apply_chart_style(
-        fig_trend
+
+    fig_history.update_layout(
+
+        template=plot_template,
+
+        hovermode="x unified"
     )
 
+
     st.plotly_chart(
-        fig_trend,
+
+        fig_history,
+
         use_container_width=True
+    )
+
+
+    # ========================================================
+    # GEMINI
+    # ========================================================
+
+    show_gemini(
+
+        business_context,
+
+        dashboard,
+
+        "gemini-section"
     )
 
 
@@ -743,276 +1653,358 @@ if dashboard == "📌 Executive Overview":
 
 elif dashboard == "📈 Sales & Customer Analytics":
 
-    st.markdown(
-        '<span class="dashboard-badge">'
-        'DASHBOARD 2 • SALES & CUSTOMER ANALYTICS'
-        '</span>',
-        unsafe_allow_html=True
-    )
 
     st.header(
         "📈 Sales & Customer Analytics"
     )
 
+
     st.caption(
-        "Understand category, customer and regional performance."
+        "Understand category, customer "
+        "and regional performance."
     )
 
 
-    # --------------------------------------------------------
-    # CATEGORY ANALYSIS
-    # --------------------------------------------------------
+    # ========================================================
+    # KPI
+    # ========================================================
 
-    category_analysis = (
-        filtered_df
-        .groupby("category")
-        .agg(
-            Sales=("sales", "sum"),
-            Profit=("profit", "sum"),
-            Quantity=("quantity", "sum")
-        )
-        .reset_index()
-        .sort_values(
-            "Sales",
-            ascending=False
-        )
+    col1, col2, col3 = st.columns(
+
+        3,
+
+        gap="large"
     )
-
-
-    col1, col2 = st.columns(2)
 
 
     with col1:
 
-        fig_cat_profit = px.bar(
-            category_analysis,
-            x="category",
-            y="Profit",
-            title="💰 Profit by Category",
-            labels={
-                "category": "Category",
-                "Profit": "Profit"
-            },
-            text_auto=".2s"
+        st.metric(
+
+            "💰 Total Sales",
+
+            f"₹{filtered_df['sales'].sum():,.2f}"
         )
 
-        apply_chart_style(
-            fig_cat_profit
+
+    with col2:
+
+        st.metric(
+
+            "📈 Total Profit",
+
+            f"₹{filtered_df['profit'].sum():,.2f}"
         )
+
+
+    with col3:
+
+        st.metric(
+
+            "📦 Quantity Sold",
+
+            f"{filtered_df['quantity'].sum():,.0f}"
+        )
+
+
+    # ========================================================
+    # PROFIT BY CATEGORY
+    # ========================================================
+
+    col1, col2 = st.columns(
+
+        2,
+
+        gap="large"
+    )
+
+
+    with col1:
+
+        profit_category = (
+
+            filtered_df
+
+            .groupby("category")["profit"]
+
+            .sum()
+
+            .sort_values(
+                ascending=False
+            )
+
+            .reset_index()
+        )
+
+
+        fig_profit = px.bar(
+
+            profit_category,
+
+            x="category",
+
+            y="profit",
+
+            title="💰 Profit by Category",
+
+            labels={
+
+                "category":
+                    "Category",
+
+                "profit":
+                    "Profit"
+
+            }
+        )
+
+
+        fig_profit.update_layout(
+
+            template=plot_template,
+
+            hovermode="x unified"
+        )
+
 
         st.plotly_chart(
-            fig_cat_profit,
+
+            fig_profit,
+
+            use_container_width=True
+        )
+
+
+    # ========================================================
+    # QUANTITY BY CATEGORY
+    # ========================================================
+
+    with col2:
+
+        quantity_category = (
+
+            filtered_df
+
+            .groupby("category")["quantity"]
+
+            .sum()
+
+            .sort_values(
+                ascending=False
+            )
+
+            .reset_index()
+        )
+
+
+        fig_quantity = px.bar(
+
+            quantity_category,
+
+            x="category",
+
+            y="quantity",
+
+            title="📦 Quantity Sold by Category",
+
+            labels={
+
+                "category":
+                    "Category",
+
+                "quantity":
+                    "Quantity"
+
+            }
+        )
+
+
+        fig_quantity.update_layout(
+
+            template=plot_template,
+
+            hovermode="x unified"
+        )
+
+
+        st.plotly_chart(
+
+            fig_quantity,
+
+            use_container_width=True
+        )
+
+
+    # ========================================================
+    # CUSTOMER SEGMENT + REGION PROFIT
+    # ========================================================
+
+    col1, col2 = st.columns(
+
+        2,
+
+        gap="large"
+    )
+
+
+    with col1:
+
+        segment_sales = (
+
+            filtered_df
+
+            .groupby("segment")["sales"]
+
+            .sum()
+
+            .reset_index()
+        )
+
+
+        fig_segment = px.pie(
+
+            segment_sales,
+
+            names="segment",
+
+            values="sales",
+
+            hole=0.45,
+
+            title="👥 Sales by Customer Segment"
+        )
+
+
+        fig_segment.update_layout(
+
+            template=plot_template
+        )
+
+
+        st.plotly_chart(
+
+            fig_segment,
+
             use_container_width=True
         )
 
 
     with col2:
 
-        fig_cat_quantity = px.bar(
-            category_analysis,
-            x="category",
-            y="Quantity",
-            title="📦 Quantity Sold by Category",
-            labels={
-                "category": "Category",
-                "Quantity": "Quantity"
-            },
-            text_auto=".2s"
+        region_profit = (
+
+            filtered_df
+
+            .groupby("region")["profit"]
+
+            .sum()
+
+            .sort_values(
+                ascending=False
+            )
+
+            .reset_index()
         )
 
-        apply_chart_style(
-            fig_cat_quantity
+
+        fig_region_profit = px.bar(
+
+            region_profit,
+
+            x="region",
+
+            y="profit",
+
+            title="🌍 Profit by Region",
+
+            labels={
+
+                "region":
+                    "Region",
+
+                "profit":
+                    "Profit"
+
+            }
         )
+
+
+        fig_region_profit.update_layout(
+
+            template=plot_template,
+
+            hovermode="x unified"
+        )
+
 
         st.plotly_chart(
-            fig_cat_quantity,
+
+            fig_region_profit,
+
             use_container_width=True
         )
 
 
-    st.markdown("---")
+    # ========================================================
+    # SALES TREND
+    # ========================================================
 
-
-    # --------------------------------------------------------
-    # CUSTOMER SEGMENT
-    # --------------------------------------------------------
-
-    if "segment" in filtered_df.columns:
-
-        segment_sales = (
-            filtered_df
-            .groupby("segment")["sales"]
-            .sum()
-            .reset_index()
-            .sort_values(
-                "sales",
-                ascending=False
-            )
-        )
-
-        col1, col2 = st.columns(2)
-
-
-        with col1:
-
-            fig_segment = px.pie(
-                segment_sales,
-                names="segment",
-                values="sales",
-                hole=0.55,
-                title="👥 Sales by Customer Segment"
-            )
-
-            apply_chart_style(
-                fig_segment
-            )
-
-            st.plotly_chart(
-                fig_segment,
-                use_container_width=True
-            )
-
-
-        with col2:
-
-            segment_profit = (
-                filtered_df
-                .groupby("segment")["profit"]
-                .sum()
-                .reset_index()
-                .sort_values(
-                    "profit",
-                    ascending=False
-                )
-            )
-
-            fig_segment_profit = px.bar(
-                segment_profit,
-                x="segment",
-                y="profit",
-                title="💰 Profit by Customer Segment",
-                labels={
-                    "segment": "Segment",
-                    "profit": "Profit"
-                },
-                text_auto=".2s"
-            )
-
-            apply_chart_style(
-                fig_segment_profit
-            )
-
-            st.plotly_chart(
-                fig_segment_profit,
-                use_container_width=True
-            )
-
-
-    st.markdown("---")
-
-
-    # --------------------------------------------------------
-    # TOP CUSTOMERS
-    # --------------------------------------------------------
-
-    if "customer_name" in filtered_df.columns:
-
-        top_customers = (
-            filtered_df
-            .groupby("customer_name")["sales"]
-            .sum()
-            .sort_values(
-                ascending=False
-            )
-            .head(10)
-            .reset_index()
-        )
-
-        fig_customers = px.bar(
-            top_customers,
-            x="sales",
-            y="customer_name",
-            orientation="h",
-            title="🏆 Top 10 Customers by Sales",
-            labels={
-                "sales": "Sales",
-                "customer_name": "Customer"
-            },
-            text_auto=".2s"
-        )
-
-        fig_customers.update_layout(
-            yaxis=dict(
-                categoryorder="total ascending"
-            )
-        )
-
-        apply_chart_style(
-            fig_customers
-        )
-
-        st.plotly_chart(
-            fig_customers,
-            use_container_width=True
-        )
-
-
-    # --------------------------------------------------------
-    # REGION PROFITABILITY
-    # --------------------------------------------------------
-
-    region_analysis = (
-        filtered_df
-        .groupby("region")
-        .agg(
-            Sales=("sales", "sum"),
-            Profit=("profit", "sum")
-        )
-        .reset_index()
+    st.subheader(
+        "📈 Monthly Sales Trend"
     )
 
-    fig_region_profit = px.bar(
-        region_analysis,
-        x="region",
-        y=["Sales", "Profit"],
-        barmode="group",
-        title="🌍 Regional Sales vs Profit"
+
+    fig_sales_trend = px.line(
+
+        monthly_sales,
+
+        x="order_date",
+
+        y="sales",
+
+        title="Monthly Sales Trend",
+
+        labels={
+
+            "order_date":
+                "Month",
+
+            "sales":
+                "Sales"
+
+        },
+
+        markers=True
     )
 
-    apply_chart_style(
-        fig_region_profit
+
+    fig_sales_trend.update_layout(
+
+        template=plot_template,
+
+        hovermode="x unified"
     )
+
 
     st.plotly_chart(
-        fig_region_profit,
+
+        fig_sales_trend,
+
         use_container_width=True
     )
 
 
-    # --------------------------------------------------------
-    # ANALYTICS TABLE
-    # --------------------------------------------------------
+    # ========================================================
+    # GEMINI
+    # ========================================================
 
-    st.subheader(
-        "📋 Category Performance Summary"
-    )
+    show_gemini(
 
-    display_category = category_analysis.copy()
+        business_context,
 
-    display_category["Sales"] = (
-        display_category["Sales"]
-        .round(2)
-    )
+        dashboard,
 
-    display_category["Profit"] = (
-        display_category["Profit"]
-        .round(2)
-    )
-
-    st.dataframe(
-        display_category,
-        use_container_width=True,
-        hide_index=True
+        "gemini-section"
     )
 
 
@@ -1021,50 +2013,66 @@ elif dashboard == "📈 Sales & Customer Analytics":
 # FORECAST & AI
 # ============================================================
 
-elif dashboard == "🔮 Forecast & AI":
+else:
 
-    st.markdown(
-        '<span class="dashboard-badge">'
-        'DASHBOARD 3 • FORECAST & AI'
-        '</span>',
-        unsafe_allow_html=True
-    )
 
     st.header(
-        "🔮 Forecast & AI Intelligence"
+        "🔮 Forecast & AI"
     )
 
+
     st.caption(
-        "Forecast future sales and use Gemini AI "
-        "for business decision support."
+
+        "Forecast future sales and "
+        "get AI-powered business recommendations."
     )
+
+
+    # ========================================================
+    # KPIs
+    # ========================================================
+
+    col1, col2, col3 = st.columns(
+
+        3,
+
+        gap="large"
+    )
+
+
+    with col1:
+
+        st.metric(
+
+            "💰 Current Sales",
+
+            f"₹{filtered_df['sales'].sum():,.2f}"
+        )
+
+
+    with col2:
+
+        st.metric(
+
+            "📈 Current Profit",
+
+            f"₹{filtered_df['profit'].sum():,.2f}"
+        )
+
+
+    with col3:
+
+        st.metric(
+
+            "🔮 2021 Forecast",
+
+            f"₹{forecast['Predicted Sales'].sum():,.2f}"
+        )
 
 
     # ========================================================
     # HISTORICAL SALES
     # ========================================================
-
-    monthly_sales = (
-        filtered_df
-        .groupby(
-            filtered_df["order_date"]
-            .dt.to_period("M")
-        )["sales"]
-        .sum()
-        .reset_index()
-    )
-
-    monthly_sales["order_date"] = (
-        monthly_sales["order_date"]
-        .dt.to_timestamp()
-    )
-
-    monthly_sales = (
-        monthly_sales
-        .sort_values("order_date")
-        .reset_index(drop=True)
-    )
-
 
     st.subheader(
         "📈 Historical Monthly Sales"
@@ -1072,643 +2080,145 @@ elif dashboard == "🔮 Forecast & AI":
 
 
     fig_history = px.line(
+
         monthly_sales,
+
         x="order_date",
+
         y="sales",
-        title="Historical Sales Trend",
+
+        title="Historical Monthly Sales",
+
         labels={
-            "order_date": "Month",
-            "sales": "Sales"
+
+            "order_date":
+                "Month",
+
+            "sales":
+                "Sales"
+
         },
+
         markers=True
     )
 
-    apply_chart_style(
-        fig_history
+
+    fig_history.update_layout(
+
+        template=plot_template,
+
+        hovermode="x unified"
     )
 
+
     st.plotly_chart(
+
         fig_history,
+
         use_container_width=True
     )
 
 
     # ========================================================
-    # FORECAST
+    # 2021 FORECAST
     # ========================================================
 
-    st.markdown("---")
-
     st.subheader(
-        "🔮 Next 12-Month Sales Forecast"
+        "🔮 2021 Sales Forecast"
     )
 
 
-    if len(monthly_sales) >= 2:
+    fig_forecast = px.line(
 
-        monthly_sales["time_index"] = np.arange(
-            len(monthly_sales)
-        )
+        forecast,
 
-        X = monthly_sales[
-            ["time_index"]
-        ]
+        x="Month",
 
-        y = monthly_sales[
-            "sales"
-        ]
+        y="Predicted Sales",
 
-        model = LinearRegression()
+        title="2021 Sales Forecast",
 
-        model.fit(
-            X,
-            y
-        )
+        labels={
 
-        future_index = np.arange(
-            len(monthly_sales),
-            len(monthly_sales) + 12
-        ).reshape(-1, 1)
-
-        forecast_values = model.predict(
-            future_index
-        )
-
-        forecast_values = np.maximum(
-            forecast_values,
-            0
-        )
-
-        last_month = (
-            monthly_sales["order_date"]
-            .max()
-        )
-
-        forecast_dates = pd.date_range(
-            start=(
-                last_month
-                + pd.offsets.MonthBegin(1)
-            ),
-            periods=12,
-            freq="MS"
-        )
-
-        forecast = pd.DataFrame({
-
-            "Month": forecast_dates,
+            "Month":
+                "Month",
 
             "Predicted Sales":
-                forecast_values
+                "Predicted Sales"
 
-        })
+        },
+
+        markers=True
+    )
 
 
-        # ----------------------------------------------------
-        # FORECAST KPIs
-        # ----------------------------------------------------
+    fig_forecast.update_layout(
 
-        forecast_total = (
-            forecast["Predicted Sales"]
-            .sum()
+        template=plot_template,
+
+        hovermode="x unified"
+    )
+
+
+    st.plotly_chart(
+
+        fig_forecast,
+
+        use_container_width=True
+    )
+
+
+    # ========================================================
+    # FORECAST TABLE
+    # ========================================================
+
+    st.subheader(
+        "📋 Forecasted Sales"
+    )
+
+
+    display_forecast = forecast.copy()
+
+
+    display_forecast["Month"] = (
+
+        display_forecast["Month"]
+
+        .dt.strftime(
+            "%b %Y"
         )
-
-        forecast_average = (
-            forecast["Predicted Sales"]
-            .mean()
-        )
-
-        forecast_peak = (
-            forecast["Predicted Sales"]
-            .max()
-        )
-
-        forecast_peak_month = (
-            forecast.loc[
-                forecast["Predicted Sales"]
-                .idxmax(),
-                "Month"
-            ]
-        )
+    )
 
 
-        col1, col2, col3 = st.columns(3)
-
-
-        with col1:
-
-            st.metric(
-                "🔮 Forecasted 12-Month Sales",
-                currency(
-                    forecast_total
-                )
-            )
-
-
-        with col2:
-
-            st.metric(
-                "📊 Average Monthly Forecast",
-                currency(
-                    forecast_average
-                )
-            )
-
-
-        with col3:
-
-            st.metric(
-                "🏆 Peak Forecast Month",
-                forecast_peak_month.strftime(
-                    "%b %Y"
-                )
-            )
-
-
-        # ----------------------------------------------------
-        # FORECAST CHART
-        # ----------------------------------------------------
-
-        fig_forecast = px.line(
-            forecast,
-            x="Month",
-            y="Predicted Sales",
-            title="🔮 Next 12-Month Sales Forecast",
-            labels={
-                "Month": "Month",
-                "Predicted Sales":
-                    "Predicted Sales"
-            },
-            markers=True
-        )
-
-        apply_chart_style(
-            fig_forecast
-        )
-
-        st.plotly_chart(
-            fig_forecast,
-            use_container_width=True
-        )
-
-
-        # ----------------------------------------------------
-        # FORECAST TABLE
-        # ----------------------------------------------------
-
-        st.subheader(
-            "📋 Forecasted Sales"
-        )
-
-        display_forecast = (
-            forecast.copy()
-        )
-
-        display_forecast["Month"] = (
-            display_forecast["Month"]
-            .dt.strftime("%b %Y")
-        )
+    display_forecast["Predicted Sales"] = (
 
         display_forecast[
             "Predicted Sales"
-        ] = (
-            display_forecast[
-                "Predicted Sales"
-            ].round(2)
-        )
-
-        st.dataframe(
-            display_forecast,
-            use_container_width=True,
-            hide_index=True
-        )
-
-
-    else:
-
-        st.warning(
-            "⚠️ Not enough monthly data "
-            "to generate a reliable forecast."
-        )
-
-        forecast = pd.DataFrame(
-            columns=[
-                "Month",
-                "Predicted Sales"
-            ]
-        )
-
-
-    # ========================================================
-    # GEMINI AI
-    # ========================================================
-
-    st.markdown("---")
-
-    st.header(
-        "🤖 Gemini AI Business Assistant"
-    )
-
-    st.caption(
-        "Use AI to understand your business data, "
-        "find problems and make decisions."
-    )
-
-
-    # --------------------------------------------------------
-    # PREPARE AI BUSINESS CONTEXT
-    # --------------------------------------------------------
-
-    category_context = (
-        filtered_df
-        .groupby("category")
-        .agg(
-            Sales=("sales", "sum"),
-            Profit=("profit", "sum"),
-            Quantity=("quantity", "sum")
-        )
-        .round(2)
-        .sort_values(
-            "Sales",
-            ascending=False
-        )
-        .head(20)
-        .to_string()
-    )
-
-
-    region_context = (
-        filtered_df
-        .groupby("region")
-        .agg(
-            Sales=("sales", "sum"),
-            Profit=("profit", "sum")
-        )
-        .round(2)
-        .sort_values(
-            "Sales",
-            ascending=False
-        )
-        .to_string()
-    )
-
-
-    segment_context = (
-        filtered_df
-        .groupby("segment")
-        .agg(
-            Sales=("sales", "sum"),
-            Profit=("profit", "sum")
-        )
-        .round(2)
-        .sort_values(
-            "Sales",
-            ascending=False
-        )
-        .to_string()
-    )
-
-
-    historical_context = (
-        monthly_sales[
-            ["order_date", "sales"]
         ]
-        .tail(24)
-        .to_string(index=False)
+
+        .round(2)
     )
 
 
-    forecast_context = (
-        forecast.to_string(
-            index=False
-        )
-        if not forecast.empty
-        else "Forecast unavailable."
+    st.dataframe(
+
+        display_forecast,
+
+        use_container_width=True,
+
+        hide_index=True
     )
-
-
-    business_context = f"""
-
-RETAILPULSE AI BUSINESS CONTEXT
-
-Selected Date Range:
-{start_date.strftime("%d %b %Y")}
-to
-{end_date.strftime("%d %b %Y")}
-
-TOTAL SALES:
-{total_sales:.2f}
-
-TOTAL PROFIT:
-{total_profit:.2f}
-
-TOTAL QUANTITY:
-{total_quantity:.0f}
-
-PROFIT MARGIN:
-{profit_margin:.2f}%
-
-TOTAL ORDERS:
-{total_orders}
-
-TOTAL CUSTOMERS:
-{total_customers}
-
-RECORDS:
-{len(filtered_df)}
-
-SELECTED CATEGORIES:
-{", ".join(selected_categories)}
-
-SELECTED REGIONS:
-{", ".join(selected_regions)}
-
-SELECTED CUSTOMER SEGMENTS:
-{", ".join(selected_segments)}
-
-
-CATEGORY PERFORMANCE:
-{category_context}
-
-
-REGION PERFORMANCE:
-{region_context}
-
-
-CUSTOMER SEGMENT PERFORMANCE:
-{segment_context}
-
-
-RECENT HISTORICAL MONTHLY SALES:
-{historical_context}
-
-
-NEXT 12-MONTH FORECAST:
-{forecast_context}
-
-"""
 
 
     # ========================================================
-    # FIXED AI INSIGHTS
+    # GEMINI
     # ========================================================
 
-    with st.expander(
-        "✨ Generate AI Business Insights",
-        expanded=False
-    ):
+    show_gemini(
 
-        st.write(
-            "Generate a structured business analysis "
-            "using the currently selected filters."
-        )
+        business_context,
 
+        dashboard,
 
-        if st.button(
-            "✨ Generate AI Insights",
-            key="generate_ai_insights"
-        ):
-
-            try:
-
-                from google import genai
-
-                api_key = os.environ.get(
-                    "GEMINI_API_KEY"
-                )
-
-                if not api_key:
-
-                    st.error(
-                        "❌ GEMINI_API_KEY is not configured."
-                    )
-
-                else:
-
-                    client = genai.Client(
-                        api_key=api_key
-                    )
-
-
-                    prompt = f"""
-
-You are an expert retail business analyst
-working for RetailPulse AI.
-
-Analyze ONLY the business data provided below.
-
-{business_context}
-
-Provide the analysis in exactly these sections:
-
-### 📈 TREND ANALYSIS
-
-Analyze:
-
-- Historical sales trends
-- Profit trends
-- Category performance
-- Region performance
-- Customer segment performance
-- Next 12-month sales forecast
-
-### 💡 BUSINESS INSIGHTS
-
-Identify the most important findings
-from the selected data.
-
-### ❓ WHY IS THIS HAPPENING?
-
-Explain possible reasons behind
-the observed trends using ONLY
-the available data.
-
-Do not invent causes.
-
-### 🎯 RECOMMENDATIONS
-
-Give exactly 5 practical and
-actionable recommendations.
-
-RULES:
-
-- Do not invent numbers.
-- Use only the provided data.
-- Respect the selected date range.
-- Consider the selected filters.
-- Clearly distinguish facts from assumptions.
-- Do not claim correlation is causation.
-- Keep explanations business-focused.
-- Mention when something cannot be determined.
-- Use simple and clear language.
-
-"""
-
-
-                    with st.spinner(
-                        "🤖 Gemini is analyzing the business data..."
-                    ):
-
-                        response = (
-                            client.models.generate_content(
-                                model="gemini-3.5-flash-lite",
-                                contents=prompt
-                            )
-                        )
-
-
-                    st.success(
-                        "✅ AI analysis generated successfully!"
-                    )
-
-                    st.markdown(
-                        response.text
-                    )
-
-
-            except Exception as e:
-
-                st.error(
-                    "❌ Gemini AI could not generate the analysis."
-                )
-
-                st.exception(e)
-
-
-    # ========================================================
-    # CUSTOM USER PROMPT
-    # ========================================================
-
-    st.markdown("---")
-
-    st.subheader(
-        "💬 Ask Gemini Anything"
+        "gemini-section"
     )
-
-    st.write(
-        "Ask your own business question using the "
-        "currently selected dashboard data."
-    )
-
-
-    user_prompt = st.text_area(
-        "Your Question",
-        placeholder=(
-            "Example: Why is profit lower in the "
-            "West region and what should the company do?"
-        ),
-        height=120,
-        key="custom_gemini_prompt"
-    )
-
-
-    if st.button(
-        "🤖 Ask Gemini",
-        key="ask_custom_gemini"
-    ):
-
-        if not user_prompt.strip():
-
-            st.warning(
-                "⚠️ Please enter a question first."
-            )
-
-        else:
-
-            try:
-
-                from google import genai
-
-                api_key = os.environ.get(
-                    "GEMINI_API_KEY"
-                )
-
-                if not api_key:
-
-                    st.error(
-                        "❌ GEMINI_API_KEY is not configured."
-                    )
-
-                else:
-
-                    client = genai.Client(
-                        api_key=api_key
-                    )
-
-
-                    custom_prompt = f"""
-
-You are the AI Business Assistant
-inside RetailPulse AI.
-
-The user has asked:
-
-"{user_prompt}"
-
-You must answer the user's question
-using the retail business context below.
-
-IMPORTANT:
-
-- Use ONLY the provided data.
-- Do not invent numbers.
-- If the data is insufficient, say so.
-- Respect the selected filters.
-- Respect the selected date range.
-- Use the forecast when relevant.
-- Distinguish facts from assumptions.
-- Do not claim causation without evidence.
-- Give practical business-oriented answers.
-- If useful, provide clear action steps.
-- Keep the answer understandable for a business user.
-
-RETAIL BUSINESS CONTEXT:
-
-{business_context}
-
-USER QUESTION:
-
-{user_prompt}
-
-"""
-
-
-                    with st.spinner(
-                        "🤖 Gemini is preparing your answer..."
-                    ):
-
-                        response = (
-                            client.models.generate_content(
-                                model="gemini-3.5-flash-lite",
-                                contents=custom_prompt
-                            )
-                        )
-
-
-                    st.success(
-                        "✅ Gemini response generated!"
-                    )
-
-                    st.markdown(
-                        response.text
-                    )
-
-
-            except Exception as e:
-
-                st.error(
-                    "❌ Gemini could not answer the question."
-                )
-
-                st.exception(e)
-
-
-# ============================================================
-# FOOTER
-# ============================================================
-
-st.markdown("---")
-
-st.caption(
-    "© RetailPulse AI • AI-Powered Retail Analytics "
-    "and Decision Support Platform"
-)
