@@ -20,22 +20,17 @@ st.set_page_config(
 
 
 # ============================================================
-# RESPONSIVE CSS
-# IMPORTANT:
-# NO position: fixed
-# NO position: absolute
-# NO custom sidebar positioning
-# Streamlit native sidebar is preserved
+# RESPONSIVE / THEME CSS
 # ============================================================
 
 st.markdown("""
 <style>
 
 /* ============================================================
-   GENERAL TEXT
+   GENERAL
 ============================================================ */
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5, h6 {
     color: var(--text-color) !important;
 }
 
@@ -46,7 +41,7 @@ p, label, span {
 
 /* ============================================================
    SIDEBAR
-   DO NOT CHANGE POSITION
+   Native Streamlit sidebar only
 ============================================================ */
 
 [data-testid="stSidebar"] {
@@ -63,64 +58,44 @@ p, label, span {
 ============================================================ */
 
 [data-testid="stMetric"] {
+    background-color: var(--secondary-background-color) !important;
 
-    background-color:
-        var(--secondary-background-color) !important;
+    border: 1px solid rgba(128,128,128,0.25);
 
-    border:
-        1px solid rgba(128,128,128,0.25);
+    border-radius: 16px;
 
-    border-radius:
-        16px;
+    padding: 18px 20px;
 
-    padding:
-        18px 20px;
+    min-height: 120px;
 
-    min-height:
-        120px;
-
-    box-shadow:
-        0 4px 14px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
 
     transition:
         transform 0.2s ease,
         box-shadow 0.2s ease;
 }
 
-
 [data-testid="stMetric"]:hover {
-
-    transform:
-        translateY(-3px);
+    transform: translateY(-3px);
 
     box-shadow:
         0 8px 22px rgba(0,0,0,0.13);
 }
 
-
 [data-testid="stMetricLabel"] {
+    color: var(--text-color) !important;
 
-    color:
-        var(--text-color) !important;
+    font-size: 14px !important;
 
-    font-size:
-        14px !important;
-
-    font-weight:
-        600 !important;
+    font-weight: 600 !important;
 }
 
-
 [data-testid="stMetricValue"] {
+    color: var(--text-color) !important;
 
-    color:
-        var(--text-color) !important;
+    font-size: 27px !important;
 
-    font-size:
-        27px !important;
-
-    font-weight:
-        700 !important;
+    font-weight: 700 !important;
 }
 
 
@@ -129,15 +104,11 @@ p, label, span {
 ============================================================ */
 
 .stButton > button {
+    border-radius: 10px;
 
-    border-radius:
-        10px;
+    font-weight: 600;
 
-    font-weight:
-        600;
-
-    min-height:
-        42px;
+    min-height: 42px;
 }
 
 
@@ -146,99 +117,50 @@ p, label, span {
 ============================================================ */
 
 [data-testid="stExpander"] {
-
-    border-radius:
-        14px;
+    border-radius: 14px;
 }
 
 
 /* ============================================================
-   TOP MENU
+   TOP NAVIGATION
 ============================================================ */
 
-.rp-topbar {
-
-    width: 100%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 12px;
-
-    padding: 10px 14px;
-
-    margin-bottom: 18px;
-
-    border:
-        1px solid rgba(128,128,128,0.25);
-
-    border-radius:
-        14px;
-
-    background:
-        var(--secondary-background-color);
+.rp-top-title {
+    font-size: 20px;
+    font-weight: 750;
+    padding-top: 7px;
 }
 
 
-.rp-brand {
+/* ============================================================
+   GEMINI NAVIGATION LINK
+============================================================ */
 
-    font-size:
-        18px;
+.rp-gemini-nav {
+    display: inline-block;
 
-    font-weight:
-        750;
+    text-decoration: none !important;
+
+    color: var(--text-color) !important;
+
+    background: var(--secondary-background-color);
+
+    border: 1px solid rgba(128,128,128,0.30);
+
+    border-radius: 10px;
+
+    padding: 8px 14px;
+
+    font-weight: 650;
+
+    transition: background 0.2s ease,
+                transform 0.2s ease;
 }
 
+.rp-gemini-nav:hover {
+    background: rgba(128,128,128,0.14);
 
-.rp-menu {
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    gap:
-        8px;
-
-    flex-wrap:
-        wrap;
-}
-
-
-.rp-menu a {
-
-    text-decoration:
-        none !important;
-
-    color:
-        var(--text-color) !important;
-
-    font-weight:
-        650;
-
-    padding:
-        8px 12px;
-
-    border-radius:
-        9px;
-}
-
-
-.rp-menu a:hover {
-
-    background:
-        rgba(128,128,128,0.12);
-}
-
-
-.rp-gemini-link {
-
-    border:
-        1px solid rgba(128,128,128,0.28);
+    transform: translateY(-1px);
 }
 
 
@@ -247,76 +169,41 @@ p, label, span {
 ============================================================ */
 
 .rp-section {
-
-    scroll-margin-top:
-        25px;
+    scroll-margin-top: 30px;
 }
 
 
 /* ============================================================
-   MOBILE RESPONSIVE
+   MOBILE
 ============================================================ */
 
 @media (max-width: 768px) {
 
-    .rp-topbar {
-
-        align-items:
-            flex-start;
-
-        padding:
-            10px;
+    .block-container {
+        padding-left: 0.8rem !important;
+        padding-right: 0.8rem !important;
     }
 
-
-    .rp-brand {
-
-        font-size:
-            15px;
+    .rp-top-title {
+        font-size: 16px;
     }
 
-
-    .rp-menu {
-
-        justify-content:
-            flex-end;
+    .rp-gemini-nav {
+        font-size: 13px;
+        padding: 7px 10px;
     }
-
-
-    .rp-menu a {
-
-        font-size:
-            13px;
-
-        padding:
-            7px 9px;
-    }
-
 
     [data-testid="stMetric"] {
-
-        min-height:
-            100px;
-
-        padding:
-            14px;
+        min-height: 100px;
+        padding: 14px;
     }
-
 
     [data-testid="stMetricValue"] {
-
-        font-size:
-            22px !important;
+        font-size: 21px !important;
     }
 
-
-    .block-container {
-
-        padding-left:
-            1rem !important;
-
-        padding-right:
-            1rem !important;
+    [data-testid="stMetricLabel"] {
+        font-size: 12px !important;
     }
 
 }
@@ -345,9 +232,6 @@ def load_data():
         subset=["order_date"]
     ).copy()
 
-
-    # Ensure numeric columns
-
     for col in [
         "sales",
         "profit",
@@ -361,7 +245,6 @@ def load_data():
                 errors="coerce"
             ).fillna(0)
 
-
     return data
 
 
@@ -369,7 +252,7 @@ df = load_data()
 
 
 # ============================================================
-# HELPER — PLOTLY THEME
+# PLOTLY THEME
 # ============================================================
 
 def get_plotly_template():
@@ -377,12 +260,9 @@ def get_plotly_template():
     try:
 
         if st.context.theme.type == "dark":
-
             return "plotly_dark"
 
-        else:
-
-            return "plotly_white"
+        return "plotly_white"
 
     except Exception:
 
@@ -393,150 +273,86 @@ plot_template = get_plotly_template()
 
 
 # ============================================================
-# HELPER — FORECAST
+# FORECAST FUNCTION
 # ============================================================
 
 def create_forecast(data):
 
     monthly_sales = (
-
         data
-
         .groupby(
-            data["order_date"]
-            .dt.to_period("M")
+            data["order_date"].dt.to_period("M")
         )["sales"]
-
         .sum()
-
         .reset_index()
     )
 
-
     monthly_sales["order_date"] = (
-
         monthly_sales["order_date"]
-
         .dt.to_timestamp()
     )
 
-
     monthly_sales = (
-
         monthly_sales
-
         .sort_values("order_date")
-
         .reset_index(drop=True)
     )
 
-
     forecast_dates = pd.date_range(
-
         start="2021-01-01",
-
         periods=12,
-
         freq="MS"
     )
-
-
-    # --------------------------------------------------------
-    # NO DATA
-    # --------------------------------------------------------
 
     if monthly_sales.empty:
 
         forecast_values = np.zeros(12)
 
-
-    # --------------------------------------------------------
-    # ONLY ONE MONTH
-    # --------------------------------------------------------
-
     elif len(monthly_sales) == 1:
 
         forecast_values = np.repeat(
-
             monthly_sales["sales"].iloc[0],
-
             12
         )
-
-
-    # --------------------------------------------------------
-    # LINEAR REGRESSION
-    # --------------------------------------------------------
 
     else:
 
         monthly_sales["time_index"] = np.arange(
-
             len(monthly_sales)
         )
 
+        X = monthly_sales[["time_index"]]
 
-        X = monthly_sales[
-            ["time_index"]
-        ]
-
-
-        y = monthly_sales[
-            "sales"
-        ]
-
+        y = monthly_sales["sales"]
 
         model = LinearRegression()
 
-
-        model.fit(
-            X,
-            y
-        )
-
+        model.fit(X, y)
 
         first_month = (
-
-            monthly_sales[
-                "order_date"
-            ].min()
+            monthly_sales["order_date"].min()
         )
-
 
         forecast_index = np.array([
 
             (
-                (date.year - first_month.year)
-                * 12
-
+                (date.year - first_month.year) * 12
                 +
-
                 (date.month - first_month.month)
             )
 
             for date in forecast_dates
 
-        ]).reshape(
-            -1,
-            1
-        )
-
+        ]).reshape(-1, 1)
 
         forecast_values = model.predict(
-
             forecast_index
         )
 
-
-    # Never allow negative sales
-
     forecast_values = np.maximum(
-
         forecast_values,
-
         0
     )
-
 
     forecast = pd.DataFrame({
 
@@ -545,78 +361,51 @@ def create_forecast(data):
 
         "Predicted Sales":
             forecast_values
-    })
 
+    })
 
     return monthly_sales, forecast
 
 
 # ============================================================
-# HELPER — GEMINI BUSINESS CONTEXT
+# GEMINI BUSINESS CONTEXT
 # ============================================================
 
 def create_business_context(
-
     filtered_df,
-
     monthly_sales,
-
     forecast,
-
     selected_categories,
-
     selected_regions,
-
     selected_segments,
-
     start_date,
-
     end_date,
-
     dashboard_name
-
 ):
 
-
     category_sales = (
-
         filtered_df
-
         .groupby("category")["sales"]
-
         .sum()
     )
-
 
     category_profit = (
-
         filtered_df
-
         .groupby("category")["profit"]
-
         .sum()
     )
-
 
     region_sales = (
-
         filtered_df
-
         .groupby("region")["sales"]
-
         .sum()
     )
-
 
     region_profit = (
-
         filtered_df
-
         .groupby("region")["profit"]
-
         .sum()
     )
-
 
     context = f"""
 
@@ -650,21 +439,15 @@ NUMBER OF RECORDS:
 
 
 SELECTED CATEGORIES:
-{", ".join(
-    map(str, selected_categories)
-)}
+{", ".join(map(str, selected_categories))}
 
 
 SELECTED REGIONS:
-{", ".join(
-    map(str, selected_regions)
-)}
+{", ".join(map(str, selected_regions))}
 
 
 SELECTED CUSTOMER SEGMENTS:
-{", ".join(
-    map(str, selected_segments)
-)}
+{", ".join(map(str, selected_segments))}
 
 
 CATEGORY-WISE SALES:
@@ -702,7 +485,7 @@ HISTORICAL MONTHLY SALES:
 
 
 # ============================================================
-# HELPER — GEMINI API
+# GEMINI API
 # ============================================================
 
 def ask_gemini(prompt):
@@ -711,11 +494,7 @@ def ask_gemini(prompt):
 
         from google import genai
 
-
         api_key = None
-
-
-        # Streamlit Cloud Secrets
 
         try:
 
@@ -727,33 +506,23 @@ def ask_gemini(prompt):
 
             pass
 
-
-        # Local environment fallback
-
         if not api_key:
 
             api_key = os.environ.get(
                 "GEMINI_API_KEY"
             )
 
-
         if not api_key:
 
             return (
-
                 None,
-
                 "Gemini API key is not configured. "
                 "Please add GEMINI_API_KEY in Streamlit Secrets."
-
             )
 
-
         client = genai.Client(
-
             api_key=api_key
         )
-
 
         response = client.models.generate_content(
 
@@ -762,9 +531,7 @@ def ask_gemini(prompt):
             contents=prompt
         )
 
-
         return response.text, None
-
 
     except Exception as e:
 
@@ -772,60 +539,39 @@ def ask_gemini(prompt):
 
 
 # ============================================================
-# GLOBAL GEMINI SECTION
+# GEMINI SECTION
 # ============================================================
 
 def show_gemini(
-
     business_context,
-
     dashboard_name,
-
     section_id
-
 ):
-
 
     st.markdown("---")
 
-
-    # HTML anchor
+    # Navigation target
     st.markdown(
-
-        f"""
-        <div
-            id="{section_id}"
-            class="rp-section">
-        </div>
-        """,
-
+        f'<div id="{section_id}" class="rp-section"></div>',
         unsafe_allow_html=True
     )
-
 
     st.subheader(
         "🤖 Gemini AI Business Assistant"
     )
 
-
     st.caption(
-
         f"AI assistant for {dashboard_name}. "
         "Use the standard analysis or ask your own question."
     )
 
-
     with st.expander(
-
         "🤖 Open Gemini AI",
-
         expanded=False
-
     ):
 
-
         # ====================================================
-        # FIXED ANALYSIS
+        # FIXED AI ANALYSIS
         # ====================================================
 
         fixed_prompt = f"""
@@ -884,27 +630,18 @@ RULES:
   is insufficient.
 """
 
-
         if st.button(
-
             "✨ Generate AI Insights",
-
             key=f"generate_{section_id}"
-
         ):
 
-
             with st.spinner(
-
                 "🤖 Gemini is analyzing..."
             ):
 
-
                 result, error = ask_gemini(
-
                     fixed_prompt
                 )
-
 
             if error:
 
@@ -918,9 +655,7 @@ RULES:
                     "✅ AI analysis generated successfully!"
                 )
 
-                st.markdown(
-                    result
-                )
+                st.markdown(result)
 
 
         # ====================================================
@@ -930,7 +665,6 @@ RULES:
         st.markdown(
             "### 💬 Ask Gemini Anything"
         )
-
 
         user_prompt = st.text_area(
 
@@ -946,18 +680,12 @@ RULES:
             height=110,
 
             key=f"custom_prompt_{section_id}"
-
         )
 
-
         if st.button(
-
             "🚀 Ask Gemini",
-
             key=f"ask_{section_id}"
-
         ):
-
 
             if not user_prompt.strip():
 
@@ -965,9 +693,7 @@ RULES:
                     "Please enter your question first."
                 )
 
-
             else:
-
 
                 custom_prompt = f"""
 
@@ -1004,18 +730,13 @@ RULES:
 - Keep the answer simple and clear.
 """
 
-
                 with st.spinner(
-
                     "🤖 Gemini is preparing your answer..."
                 ):
 
-
                     result, error = ask_gemini(
-
                         custom_prompt
                     )
-
 
                 if error:
 
@@ -1029,40 +750,31 @@ RULES:
                         "✅ Gemini response generated!"
                     )
 
-                    st.markdown(
-                        result
-                    )
+                    st.markdown(result)
 
 
 # ============================================================
-# TOP MENU
+# TOP NAVIGATION
 # ============================================================
 
-st.markdown(
-
-    """
-    <div class="rp-topbar">
-
-        <div class="rp-brand">
-            📊 RetailPulse AI
-        </div>
-
-        <div class="rp-menu">
-
-            <a
-                href="#gemini-section"
-                class="rp-gemini-link"
-            >
-                🤖 Gemini
-            </a>
-
-        </div>
-
-    </div>
-    """,
-
-    unsafe_allow_html=True
+top_col1, top_col2 = st.columns(
+    [5, 1],
+    gap="small"
 )
+
+with top_col1:
+
+    st.markdown(
+        '<div class="rp-top-title">📊 RetailPulse AI</div>',
+        unsafe_allow_html=True
+    )
+
+with top_col2:
+
+    st.markdown(
+        '[🤖 Gemini](#gemini-section)',
+        unsafe_allow_html=False
+    )
 
 
 # ============================================================
@@ -1072,7 +784,6 @@ st.markdown(
 st.title(
     "RetailPulse AI"
 )
-
 
 st.markdown(
     """
@@ -1092,19 +803,14 @@ st.sidebar.title(
     "🧭 Navigation"
 )
 
-
 dashboard = st.sidebar.radio(
 
     "Select Dashboard",
 
     [
-
         "📌 Executive Overview",
-
         "📈 Sales & Customer Analytics",
-
         "🔮 Forecast & AI"
-
     ],
 
     key="dashboard_navigation"
@@ -1125,12 +831,10 @@ st.sidebar.subheader(
 # CATEGORY
 
 category_options = sorted(
-
     df["category"]
     .dropna()
     .unique()
 )
-
 
 selected_categories = st.sidebar.multiselect(
 
@@ -1147,12 +851,10 @@ selected_categories = st.sidebar.multiselect(
 # REGION
 
 region_options = sorted(
-
     df["region"]
     .dropna()
     .unique()
 )
-
 
 selected_regions = st.sidebar.multiselect(
 
@@ -1169,12 +871,10 @@ selected_regions = st.sidebar.multiselect(
 # CUSTOMER SEGMENT
 
 segment_options = sorted(
-
     df["segment"]
     .dropna()
     .unique()
 )
-
 
 selected_segments = st.sidebar.multiselect(
 
@@ -1198,33 +898,25 @@ st.sidebar.subheader(
     "📅 Date Range"
 )
 
-
 min_date = (
-
     df["order_date"]
     .min()
     .date()
 )
 
-
 max_date = (
-
     df["order_date"]
     .max()
     .date()
 )
-
 
 selected_date_range = st.sidebar.date_input(
 
     "Select Date Range",
 
     value=(
-
         min_date,
-
         max_date
-
     ),
 
     min_value=min_date,
@@ -1235,32 +927,28 @@ selected_date_range = st.sidebar.date_input(
 )
 
 
-# Handle date picker
+# ============================================================
+# HANDLE DATE RANGE
+# ============================================================
 
 if isinstance(
-
     selected_date_range,
-
     (tuple, list)
-
 ):
 
     if len(selected_date_range) == 2:
 
         start_date = pd.to_datetime(
-
             selected_date_range[0]
         )
 
         end_date = pd.to_datetime(
-
             selected_date_range[1]
         )
 
     else:
 
         start_date = pd.to_datetime(
-
             selected_date_range[0]
         )
 
@@ -1269,7 +957,6 @@ if isinstance(
 else:
 
     start_date = pd.to_datetime(
-
         selected_date_range
     )
 
@@ -1307,9 +994,7 @@ filtered_df = df[
     (
         df["order_date"]
         <
-
-        end_date
-        + pd.Timedelta(days=1)
+        end_date + pd.Timedelta(days=1)
     )
 
 ].copy()
@@ -1330,11 +1015,10 @@ if filtered_df.empty:
 
 
 # ============================================================
-# CREATE FORECAST
+# FORECAST
 # ============================================================
 
 monthly_sales, forecast = create_forecast(
-
     filtered_df
 )
 
@@ -1372,14 +1056,11 @@ business_context = create_business_context(
 
 if dashboard == "📌 Executive Overview":
 
-
     st.header(
         "📌 Executive Overview"
     )
 
-
     st.caption(
-
         f"Selected period: "
         f"{start_date.strftime('%d %b %Y')} "
         f"to "
@@ -1391,71 +1072,41 @@ if dashboard == "📌 Executive Overview":
     # KPIs
     # ========================================================
 
-    total_sales = (
+    total_sales = filtered_df["sales"].sum()
 
-        filtered_df["sales"]
-        .sum()
-    )
+    total_profit = filtered_df["profit"].sum()
 
-
-    total_profit = (
-
-        filtered_df["profit"]
-        .sum()
-    )
-
-
-    total_quantity = (
-
-        filtered_df["quantity"]
-        .sum()
-    )
-
+    total_quantity = filtered_df["quantity"].sum()
 
     col1, col2, col3 = st.columns(
-
         3,
-
         gap="large"
     )
-
 
     with col1:
 
         st.metric(
-
             "💰 Total Sales",
-
             f"₹{total_sales:,.2f}"
         )
-
 
     with col2:
 
         st.metric(
-
             "📈 Total Profit",
-
             f"₹{total_profit:,.2f}"
         )
-
 
     with col3:
 
         st.metric(
-
             "📦 Quantity Sold",
-
             f"{total_quantity:,.0f}"
         )
 
-
     st.caption(
-
-        f"Showing "
-        f"{len(filtered_df):,} records "
-        f"out of "
-        f"{len(df):,} total records."
+        f"Showing {len(filtered_df):,} records "
+        f"out of {len(df):,} total records."
     )
 
 
@@ -1464,30 +1115,20 @@ if dashboard == "📌 Executive Overview":
     # ========================================================
 
     col1, col2 = st.columns(
-
         2,
-
         gap="large"
     )
-
 
     with col1:
 
         category_sales = (
 
             filtered_df
-
             .groupby("category")["sales"]
-
             .sum()
-
-            .sort_values(
-                ascending=False
-            )
-
+            .sort_values(ascending=False)
             .reset_index()
         )
-
 
         fig_category = px.bar(
 
@@ -1500,50 +1141,31 @@ if dashboard == "📌 Executive Overview":
             title="📦 Sales by Category",
 
             labels={
-
-                "category":
-                    "Category",
-
-                "sales":
-                    "Sales"
-
+                "category": "Category",
+                "sales": "Sales"
             }
         )
 
-
         fig_category.update_layout(
-
             template=plot_template,
-
             hovermode="x unified"
         )
 
-
         st.plotly_chart(
-
             fig_category,
-
             use_container_width=True
         )
-
 
     with col2:
 
         region_sales = (
 
             filtered_df
-
             .groupby("region")["sales"]
-
             .sum()
-
-            .sort_values(
-                ascending=False
-            )
-
+            .sort_values(ascending=False)
             .reset_index()
         )
-
 
         fig_region = px.bar(
 
@@ -1556,29 +1178,18 @@ if dashboard == "📌 Executive Overview":
             title="🌍 Sales by Region",
 
             labels={
-
-                "region":
-                    "Region",
-
-                "sales":
-                    "Sales"
-
+                "region": "Region",
+                "sales": "Sales"
             }
         )
 
-
         fig_region.update_layout(
-
             template=plot_template,
-
             hovermode="x unified"
         )
 
-
         st.plotly_chart(
-
             fig_region,
-
             use_container_width=True
         )
 
@@ -1591,7 +1202,6 @@ if dashboard == "📌 Executive Overview":
         "📈 Historical Monthly Sales"
     )
 
-
     fig_history = px.line(
 
         monthly_sales,
@@ -1603,31 +1213,20 @@ if dashboard == "📌 Executive Overview":
         title="Historical Monthly Sales",
 
         labels={
-
-            "order_date":
-                "Month",
-
-            "sales":
-                "Sales"
-
+            "order_date": "Month",
+            "sales": "Sales"
         },
 
         markers=True
     )
 
-
     fig_history.update_layout(
-
         template=plot_template,
-
         hovermode="x unified"
     )
 
-
     st.plotly_chart(
-
         fig_history,
-
         use_container_width=True
     )
 
@@ -1637,11 +1236,8 @@ if dashboard == "📌 Executive Overview":
     # ========================================================
 
     show_gemini(
-
         business_context,
-
         dashboard,
-
         "gemini-section"
     )
 
@@ -1653,11 +1249,9 @@ if dashboard == "📌 Executive Overview":
 
 elif dashboard == "📈 Sales & Customer Analytics":
 
-
     st.header(
         "📈 Sales & Customer Analytics"
     )
-
 
     st.caption(
         "Understand category, customer "
@@ -1666,76 +1260,55 @@ elif dashboard == "📈 Sales & Customer Analytics":
 
 
     # ========================================================
-    # KPI
+    # KPIs
     # ========================================================
 
     col1, col2, col3 = st.columns(
-
         3,
-
         gap="large"
     )
-
 
     with col1:
 
         st.metric(
-
             "💰 Total Sales",
-
             f"₹{filtered_df['sales'].sum():,.2f}"
         )
-
 
     with col2:
 
         st.metric(
-
             "📈 Total Profit",
-
             f"₹{filtered_df['profit'].sum():,.2f}"
         )
-
 
     with col3:
 
         st.metric(
-
             "📦 Quantity Sold",
-
             f"{filtered_df['quantity'].sum():,.0f}"
         )
 
 
     # ========================================================
-    # PROFIT BY CATEGORY
+    # PROFIT + QUANTITY
     # ========================================================
 
     col1, col2 = st.columns(
-
         2,
-
         gap="large"
     )
-
 
     with col1:
 
         profit_category = (
 
             filtered_df
-
             .groupby("category")["profit"]
-
             .sum()
-
-            .sort_values(
-                ascending=False
-            )
-
+            .sort_values(ascending=False)
             .reset_index()
         )
-
 
         fig_profit = px.bar(
 
@@ -1748,54 +1321,31 @@ elif dashboard == "📈 Sales & Customer Analytics":
             title="💰 Profit by Category",
 
             labels={
-
-                "category":
-                    "Category",
-
-                "profit":
-                    "Profit"
-
+                "category": "Category",
+                "profit": "Profit"
             }
         )
 
-
         fig_profit.update_layout(
-
             template=plot_template,
-
             hovermode="x unified"
         )
 
-
         st.plotly_chart(
-
             fig_profit,
-
             use_container_width=True
         )
-
-
-    # ========================================================
-    # QUANTITY BY CATEGORY
-    # ========================================================
 
     with col2:
 
         quantity_category = (
 
             filtered_df
-
             .groupby("category")["quantity"]
-
             .sum()
-
-            .sort_values(
-                ascending=False
-            )
-
+            .sort_values(ascending=False)
             .reset_index()
         )
-
 
         fig_quantity = px.bar(
 
@@ -1808,58 +1358,40 @@ elif dashboard == "📈 Sales & Customer Analytics":
             title="📦 Quantity Sold by Category",
 
             labels={
-
-                "category":
-                    "Category",
-
-                "quantity":
-                    "Quantity"
-
+                "category": "Category",
+                "quantity": "Quantity"
             }
         )
 
-
         fig_quantity.update_layout(
-
             template=plot_template,
-
             hovermode="x unified"
         )
 
-
         st.plotly_chart(
-
             fig_quantity,
-
             use_container_width=True
         )
 
 
     # ========================================================
-    # CUSTOMER SEGMENT + REGION PROFIT
+    # SEGMENT + REGION
     # ========================================================
 
     col1, col2 = st.columns(
-
         2,
-
         gap="large"
     )
-
 
     with col1:
 
         segment_sales = (
 
             filtered_df
-
             .groupby("segment")["sales"]
-
             .sum()
-
             .reset_index()
         )
-
 
         fig_segment = px.pie(
 
@@ -1874,38 +1406,25 @@ elif dashboard == "📈 Sales & Customer Analytics":
             title="👥 Sales by Customer Segment"
         )
 
-
         fig_segment.update_layout(
-
             template=plot_template
         )
 
-
         st.plotly_chart(
-
             fig_segment,
-
             use_container_width=True
         )
-
 
     with col2:
 
         region_profit = (
 
             filtered_df
-
             .groupby("region")["profit"]
-
             .sum()
-
-            .sort_values(
-                ascending=False
-            )
-
+            .sort_values(ascending=False)
             .reset_index()
         )
-
 
         fig_region_profit = px.bar(
 
@@ -1918,29 +1437,18 @@ elif dashboard == "📈 Sales & Customer Analytics":
             title="🌍 Profit by Region",
 
             labels={
-
-                "region":
-                    "Region",
-
-                "profit":
-                    "Profit"
-
+                "region": "Region",
+                "profit": "Profit"
             }
         )
 
-
         fig_region_profit.update_layout(
-
             template=plot_template,
-
             hovermode="x unified"
         )
 
-
         st.plotly_chart(
-
             fig_region_profit,
-
             use_container_width=True
         )
 
@@ -1953,7 +1461,6 @@ elif dashboard == "📈 Sales & Customer Analytics":
         "📈 Monthly Sales Trend"
     )
 
-
     fig_sales_trend = px.line(
 
         monthly_sales,
@@ -1965,31 +1472,20 @@ elif dashboard == "📈 Sales & Customer Analytics":
         title="Monthly Sales Trend",
 
         labels={
-
-            "order_date":
-                "Month",
-
-            "sales":
-                "Sales"
-
+            "order_date": "Month",
+            "sales": "Sales"
         },
 
         markers=True
     )
 
-
     fig_sales_trend.update_layout(
-
         template=plot_template,
-
         hovermode="x unified"
     )
 
-
     st.plotly_chart(
-
         fig_sales_trend,
-
         use_container_width=True
     )
 
@@ -1999,11 +1495,8 @@ elif dashboard == "📈 Sales & Customer Analytics":
     # ========================================================
 
     show_gemini(
-
         business_context,
-
         dashboard,
-
         "gemini-section"
     )
 
@@ -2015,14 +1508,11 @@ elif dashboard == "📈 Sales & Customer Analytics":
 
 else:
 
-
     st.header(
         "🔮 Forecast & AI"
     )
 
-
     st.caption(
-
         "Forecast future sales and "
         "get AI-powered business recommendations."
     )
@@ -2033,39 +1523,28 @@ else:
     # ========================================================
 
     col1, col2, col3 = st.columns(
-
         3,
-
         gap="large"
     )
-
 
     with col1:
 
         st.metric(
-
             "💰 Current Sales",
-
             f"₹{filtered_df['sales'].sum():,.2f}"
         )
-
 
     with col2:
 
         st.metric(
-
             "📈 Current Profit",
-
             f"₹{filtered_df['profit'].sum():,.2f}"
         )
-
 
     with col3:
 
         st.metric(
-
             "🔮 2021 Forecast",
-
             f"₹{forecast['Predicted Sales'].sum():,.2f}"
         )
 
@@ -2078,7 +1557,6 @@ else:
         "📈 Historical Monthly Sales"
     )
 
-
     fig_history = px.line(
 
         monthly_sales,
@@ -2090,31 +1568,20 @@ else:
         title="Historical Monthly Sales",
 
         labels={
-
-            "order_date":
-                "Month",
-
-            "sales":
-                "Sales"
-
+            "order_date": "Month",
+            "sales": "Sales"
         },
 
         markers=True
     )
 
-
     fig_history.update_layout(
-
         template=plot_template,
-
         hovermode="x unified"
     )
 
-
     st.plotly_chart(
-
         fig_history,
-
         use_container_width=True
     )
 
@@ -2127,7 +1594,6 @@ else:
         "🔮 2021 Sales Forecast"
     )
 
-
     fig_forecast = px.line(
 
         forecast,
@@ -2139,31 +1605,20 @@ else:
         title="2021 Sales Forecast",
 
         labels={
-
-            "Month":
-                "Month",
-
-            "Predicted Sales":
-                "Predicted Sales"
-
+            "Month": "Month",
+            "Predicted Sales": "Predicted Sales"
         },
 
         markers=True
     )
 
-
     fig_forecast.update_layout(
-
         template=plot_template,
-
         hovermode="x unified"
     )
 
-
     st.plotly_chart(
-
         fig_forecast,
-
         use_container_width=True
     )
 
@@ -2176,36 +1631,21 @@ else:
         "📋 Forecasted Sales"
     )
 
-
     display_forecast = forecast.copy()
 
-
     display_forecast["Month"] = (
-
         display_forecast["Month"]
-
-        .dt.strftime(
-            "%b %Y"
-        )
+        .dt.strftime("%b %Y")
     )
 
-
     display_forecast["Predicted Sales"] = (
-
-        display_forecast[
-            "Predicted Sales"
-        ]
-
+        display_forecast["Predicted Sales"]
         .round(2)
     )
 
-
     st.dataframe(
-
         display_forecast,
-
         use_container_width=True,
-
         hide_index=True
     )
 
@@ -2215,10 +1655,7 @@ else:
     # ========================================================
 
     show_gemini(
-
         business_context,
-
         dashboard,
-
         "gemini-section"
     )
