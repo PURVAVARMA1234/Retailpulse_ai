@@ -46,39 +46,52 @@ menu = st.sidebar.radio(
     ]
 )
 
-
 # ============================================================
-# 3. TAB 1: UPLOAD COMPANY DATA (FASTAPI CONNECTOR)
+# 3. TAB 1: UPLOAD COMPANY DATA (DIRECT STREAMLIT INGESTION)
 # ============================================================
 if menu == "📂 Upload Company Data":
-    st.header("📂 Dynamic CSV / XLSX Data Ingestion Engine")
-    st.write("Upload raw sales data to process via FastAPI and automatically store into PostgreSQL `retailpulse_api`.")
+  st.header("📂 Dynamic CSV / XLSX Data Ingestion Engine")
+  st.write(
+      "Upload raw sales data to automatically map schema and store into"
+      " PostgreSQL."
+  )
 
-    uploaded_file = st.file_uploader("Choose a CSV or Excel file", type=["csv", "xlsx", "xls"])
-    if uploaded_file is not None:
-        st.info(f"File Selected: **{uploaded_file.name}**")
-        if st.button("🚀 Process & Ingest to Database"):
-            with st.spinner("Processing file via FastAPI backend..."):
-                try:
-                    files = {"file": (uploaded_file.name, uploaded_file.getvalue(), uploaded_file.type)}
-                    response = requests.post("http://127.0.0.1:8000/upload", files=files)
+  uploaded_file = st.file_uploader(
+      "Choose a CSV or Excel file", type=["csv", "xlsx", "xls"]
+  )
+  if uploaded_file is not None:
+    st.info(f"File Selected: **{uploaded_file.name}**")
+    if st.button("🚀 Process & Ingest to Database"):
+      with st.spinner("Processing & uploading data..."):
+        try:
+          # 1. Read file directly into pandas
+          if uploaded_file.name.endswith(".csv"):
+            df_upload = pd.read_csv(uploaded_file)
+          else:
+            df_upload = pd.read_excel(uploaded_file)
 
-                    if response.status_code == 200:
-                        res_data = response.json()
-                        st.success(f"✅ Data Ingested Successfully! Total Rows Imported: {res_data['total_rows_imported']}")
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            st.write("**Mapped Target Schema:**")
-                            st.json(res_data["mapped_columns"])
-                        with col2:
-                            st.write("**Unmapped Preserved Columns:**")
-                            st.write(res_data["unmapped_columns"])
-                    else:
-                        st.error(f"❌ Ingestion Failed: {response.text}")
-                except Exception as e:
-                    st.error(f"❌ API Connection Error: {str(e)}")
+          # 2. Standardize column names (lowercase & remove spaces)
+          df_upload.columns = (
+              df_upload.columns.str.strip().str.lower().str.replace(" ", "_")
+          )
 
+          # 3. Direct insert to PostgreSQL
+          df_upload.to_sql(
+              "uploaded_company_sales",
+              con=engine,
+              if_exists="append",
+              index=False,
+          )
 
+          st.success(
+              "✅ Data Ingested Successfully! Total Rows Imported:"
+              f" {len(df_upload)}"
+          )
+          st.dataframe(df_upload.head(10), use_container_width=True)
+
+        except Exception as e:
+          st.error(f"❌ Ingestion Failed: {str(e)}")
+            
 # ============================================================
 # 4. TAB 2: EXECUTIVE OVERVIEW
 # ============================================================
