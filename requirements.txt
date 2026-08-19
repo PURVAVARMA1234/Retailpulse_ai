@@ -2,8 +2,9 @@ streamlit
 pandas
 openpyxl
 requests
-sqlalchemy
-psycopg2-binary
 google-generativeai
 prophet
 plotly
+mlxtend
+scikit-learn
+jinja2
